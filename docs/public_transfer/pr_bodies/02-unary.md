@@ -1,26 +1,36 @@
+**PR title (copy into the title field):** Register Unary OPs, forward pass
+
 ## Summary
 
-Unary eager-op registration rebased onto `c81f7e5`.
+Registers unary eager ATen ops (forward pass and fallbacks) on top of the tt-metal compatibility base. Same op registration work as the original upstream PR; rebased onto `c81f7e5`.
 
-## Provenance
+## These are the original commits (1:1 transfer)
 
-- **Stack base:** `c81f7e56c96c1056ef9a0343682fe02db8508b28`
-- **This PR tip:** `5d71e4649df0f933da42a22c8d970712f0b47d25`
-- **Source mapping:** tenstorrent PR #TBD (unary eager)
+Same commits authored by **Ilia Shutov** in the original upstream work (2025-10-08, 2025-10-09), transferred by rebase onto `c81f7e56`. Verify any commit: `git show <sha>`.
 
-Transfer method: rebase onto public stack base (hard-reset equivalent). Faithful op logic comes from the private/unmerged branch; infra-only fixes are separate commits listed below.
+Original upstream PR (same commits, fill in number when public): `github.com/tenstorrent/pytorch2.0_ttnn/pull/TBD`
 
-### Adjustments beyond faithful source commits
+| Commit (this PR) | Subject | Author | Authored | Verification |
+| --- | --- | --- | --- | --- |
+| `b498407e1` | Registering Unary OPs, forward pass, fallbacks | Ilia Shutov | 2025-10-08 | same op code; include-context delta from rebase |
+| `e01983dde` | PR fix: renamed to tilize | Ilia Shutov | 2025-10-09 | byte-identical (patch-id) |
+| `d8f37e47f` | PR fix: renamed to make_empty_like_ttnn | Ilia Shutov | 2025-10-09 | byte-identical (patch-id) |
 
-| Commit | Subject | Likely reason |
-| --- | --- | --- |
-| `b498407e1` | Registering Unary OPs, forward pass, fallbacks | infra / rebase fix |
-| `1e2bc63c9` | fix: remove stale unary.cpp from CMake sources | remove stale unary.cpp from CMake |
-| `5d71e4649` | fix: add tt-metal ttnn/cpp include path for eager ops | tt-metal ttnn/cpp include path |
+## Commits added on top in this transfer
 
-## Test plan
+These commits are **not** in the original upstream PR. They fix rebase/infra issues only; no eager-op behavior change.
 
-- `validate-pr` (pre-commit)
-- `cpp-extension-build`
-- `ttsim-tests`
-- `build-passed`
+1. **`1e2bc63c9`** - Remove stale `unary.cpp` from `CMakeLists.txt` sources
+   - Commit subject: fix: remove stale unary.cpp from CMake sources
+   - Author: Ilia Shutov | Authored: 2026-06-16
+   - Why: Unary eager refactor deleted the stub source file; CMake still listed it after rebase.
+
+2. **`5d71e4649`** - Add `third-party/tt-metal/ttnn/cpp` to CMake include path
+   - Commit subject: fix: add tt-metal ttnn/cpp include path for eager ops
+   - Author: Ilia Shutov | Authored: 2026-06-16
+   - Why: Installed tt-metal headers omit paths such as `complex_unary.hpp` that eager registration includes from source tree.
+
+## Stack pointers
+
+- **Base:** `c81f7e56c96c1056ef9a0343682fe02db8508b28` (`fix/tt_metal_bump`)
+- **Tip:** `5d71e4649df0f933da42a22c8d970712f0b47d25` (`public/10-unary`)

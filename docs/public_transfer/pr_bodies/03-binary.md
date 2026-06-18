@@ -1,24 +1,29 @@
+**PR title (copy into the title field):** Register Binary OPs, eager mode, forward pass
+
 ## Summary
 
-Binary eager-op registration stacked on Unary.
+Registers binary eager ATen ops stacked on Unary. Same registration commit as the original upstream PR; one mechanical rename fix applied after Unary review feedback.
 
-## Provenance
+## These are the original commits (1:1 transfer)
 
-- **Stack base:** `5d71e4649df0f933da42a22c8d970712f0b47d25`
-- **This PR tip:** `79c0ebe750a76c775e7da5dc67b65bf777d504dd`
-- **Source mapping:** tenstorrent PR #TBD (binary eager)
+Same commits authored by **Ilia Shutov** in the original upstream work (2025-10-08), transferred by rebase onto `5d71e464`. Verify any commit: `git show <sha>`.
 
-Transfer method: rebase onto public stack base (hard-reset equivalent). Faithful op logic comes from the private/unmerged branch; infra-only fixes are separate commits listed below.
+Original upstream PR (same commits, fill in number when public): `github.com/tenstorrent/pytorch2.0_ttnn/pull/TBD`
 
-### Adjustments beyond faithful source commits
+| Commit (this PR) | Subject | Author | Authored | Verification |
+| --- | --- | --- | --- | --- |
+| `5a3d4e188` | Registering Binary OPs | Ilia Shutov | 2025-10-08 | byte-identical (patch-id) |
 
-| Commit | Subject | Likely reason |
-| --- | --- | --- |
-| `79c0ebe75` | fix: rename utility API to match Unary review (tileify->tilize, make_empty_like_tt->make_empty_like_ttnn) | tileify->tilize |
+## Commits added on top in this transfer
 
-## Test plan
+These commits are **not** in the original upstream PR. They fix rebase/infra issues only; no eager-op behavior change.
 
-- `validate-pr` (pre-commit)
-- `cpp-extension-build`
-- `ttsim-tests`
-- `build-passed`
+1. **`79c0ebe75`** - Rename `tileify` -> `tilize`, `make_empty_like_tt` -> `make_empty_like_ttnn`
+   - Commit subject: fix: rename utility API to match Unary review (tileify->tilize, make_empty_like_tt->make_empty_like_ttnn)
+   - Author: Ilia Shutov | Authored: 2026-06-17
+   - Why: Binary wrappers were authored before Unary review renamed shared helpers in `eager_common.hpp`. 25 call-sites in `binary_eager_wrappers.hpp` plus 2 lines in `unary_eager_wrappers.hpp`. No op logic changed.
+
+## Stack pointers
+
+- **Base:** `5d71e4649df0f933da42a22c8d970712f0b47d25` (`public/10-unary`)
+- **Tip:** `79c0ebe750a76c775e7da5dc67b65bf777d504dd` (`public/20-binary`)

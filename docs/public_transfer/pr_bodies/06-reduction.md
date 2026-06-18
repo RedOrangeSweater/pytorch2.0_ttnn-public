@@ -1,25 +1,29 @@
+**PR title (copy into the title field):** Register Reduction OPs, eager mode, forward pass
+
 ## Summary
 
-Reduction eager-op registration stacked on Random.
+Registers reduction eager ATen ops (38 overloads) stacked on Random. Same registration commit as the original upstream PR.
 
-## Provenance
+## These are the original commits (1:1 transfer)
 
-- **Stack base:** `f9d3dec6394e83202b494289786e02520cf1d1cb`
-- **This PR tip:** `d0585f8cabb073bbc3d49666f652124bbbf7b3fc`
-- **Source mapping:** tenstorrent PR #TBD (reduction eager)
+Same commits authored by **Ilia Shutov** in the original upstream work (2025-10-08), transferred by rebase onto `f9d3dec6`. Verify any commit: `git show <sha>`.
 
-Transfer method: rebase onto public stack base (hard-reset equivalent). Faithful op logic comes from the private/unmerged branch; infra-only fixes are separate commits listed below.
+Original upstream PR (same commits, fill in number when public): `github.com/tenstorrent/pytorch2.0_ttnn/pull/TBD`
 
-### Adjustments beyond faithful source commits
+| Commit (this PR) | Subject | Author | Authored | Verification |
+| --- | --- | --- | --- | --- |
+| `0e303d283` | Registering Reduction OPs | Ilia Shutov | 2025-10-08 | same op code; include-context delta from rebase |
 
-| Commit | Subject | Likely reason |
-| --- | --- | --- |
-| `0e303d283` | Registering Reduction OPs | infra / rebase fix |
-| `d0585f8ca` | fix: rename utility API to match Unary review (tileify->tilize, make_empty_like_tt->make_empty_like_ttnn) | tileify->tilize |
+## Commits added on top in this transfer
 
-## Test plan
+These commits are **not** in the original upstream PR. They fix rebase/infra issues only; no eager-op behavior change.
 
-- `validate-pr` (pre-commit)
-- `cpp-extension-build`
-- `ttsim-tests`
-- `build-passed`
+1. **`d0585f8ca`** - Rename `tileify` -> `tilize`, `make_empty_like_tt` -> `make_empty_like_ttnn`
+   - Commit subject: fix: rename utility API to match Unary review (tileify->tilize, make_empty_like_tt->make_empty_like_ttnn)
+   - Author: Ilia Shutov | Authored: 2026-06-17
+   - Why: 17 call-sites in `reduction_eager_wrappers.hpp`. Mechanical rename only.
+
+## Stack pointers
+
+- **Base:** `f9d3dec6394e83202b494289786e02520cf1d1cb` (`public/40-random`)
+- **Tip:** `d0585f8cabb073bbc3d49666f652124bbbf7b3fc` (`public/50-reduction`)
