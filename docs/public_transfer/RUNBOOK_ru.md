@@ -33,6 +33,8 @@ Staging repo: `RedOrangeSweater/pytorch2.0_ttnn-public`
 | #6 | `public/50-reduction.dev` | Register Reduction OPs, eager mode, forward pass |
 | #7 | `public/70-pypi.dev` | Make package PyPI-buildable: torch-ttnn-shutov + ttnn-shutov |
 
+PR #1 (base): хронология upstream drift и SHA verification - [upstream_drift_timeline_ru.md](upstream_drift_timeline_ru.md).
+
 Title и body - **раздельно**: title из первой строки `PR_BODY.md`, body - весь файл целиком.
 
 ## Non-mention rule (пока работа тихая)
