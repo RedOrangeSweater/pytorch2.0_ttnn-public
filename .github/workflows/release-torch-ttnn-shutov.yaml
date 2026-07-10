@@ -49,17 +49,29 @@ jobs:
       options: >-
         --rm
         -v ${{ github.workspace }}:${{ github.workspace }} -w ${{ github.workspace }}
+        -v /:/host
     env:
       CCACHE_DIR: /tmp/ccache
       CPM_SOURCE_CACHE: /tmp/cpm
       CCACHE_BASEDIR: ${{ github.workspace }}
-      CCACHE_MAXSIZE: 5G
+      CCACHE_MAXSIZE: 2G
       PYTHON_ENV_DIR: ${{ github.workspace }}/torch_ttnn/cpp_extension/third-party/tt-metal/python_env
       TT_METAL_HOME: ${{ github.workspace }}/torch_ttnn/cpp_extension/third-party/tt-metal
     defaults:
       run:
         shell: bash
     steps:
+      - name: Free disk on host (via /host mount)
+        run: |
+          set -euxo pipefail
+          df -h / /host || true
+          rm -rf /host/usr/share/dotnet /host/usr/local/lib/android /host/opt/ghc \
+            /host/usr/local/share/powershell /host/usr/share/swift /host/usr/local/.ghcup \
+            /host/opt/hostedtoolcache/CodeQL || true
+          # Drop unused docker images on the host if docker CLI is present
+          docker system prune -af || true
+          df -h / /host || true
+
       - name: Fix apt repository keys
         run: |
           set -euxo pipefail
@@ -175,16 +187,23 @@ jobs:
           twine check dist/*.whl
 
       - name: ABI / linking report
+        continue-on-error: true
         run: |
           set -euxo pipefail
           source torch_ttnn/cpp_extension/third-party/tt-metal/python_env/bin/activate
           WHEEL_FILE=$(ls -1 dist/*.whl | head -n 1)
-          python3 tools/report_wheel_abi.py "${WHEEL_FILE}" \
-            --tt-metal-dir torch_ttnn/cpp_extension/third-party/tt-metal \
-            --output abi-report.txt
-          echo "=== tt-metal submodule ==="
-          git -C torch_ttnn/cpp_extension/third-party/tt-metal rev-parse HEAD
-          git -C torch_ttnn/cpp_extension/third-party/tt-metal describe --tags --always || true
+          {
+            echo "wheel=${WHEEL_FILE}"
+            echo "tt-metal=$(git -C torch_ttnn/cpp_extension/third-party/tt-metal rev-parse HEAD)"
+            if [[ -f tools/report_wheel_abi.py ]]; then
+              python3 tools/report_wheel_abi.py "${WHEEL_FILE}" \
+                --tt-metal-dir torch_ttnn/cpp_extension/third-party/tt-metal \
+                --output /dev/stdout
+            else
+              echo "tools/report_wheel_abi.py missing; skipped detailed ABI dump"
+              unzip -l "${WHEEL_FILE}" | awk '/\.so($|\.)/ {print $NF}' | head -40
+            fi
+          } | tee abi-report.txt
 
       - name: Upload ABI report
         uses: actions/upload-artifact@v4

@@ -62,29 +62,52 @@ Both release workflows use `workflow_dispatch` input `publish_target`: `testpypi
 
 ## Post-publish verification
 
+Runtime requirement: Actions-built `ttnn-shutov` needs OpenMPI **5** ULFM
+(`MPIX_Comm_revoke`). Host apt OpenMPI 4.x is not enough; set
+`LD_LIBRARY_PATH` to the ULFM lib dir (from the manylinux image
+`/opt/openmpi-v5.0.7-ulfm/lib` or an extracted copy).
+
 ```bash
 # TestPyPI rehearsal (index-url is the only difference)
+export LD_LIBRARY_PATH=/path/to/openmpi-v5.0.7-ulfm/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+python3.10 -m venv /tmp/ttnn-testpypi && . /tmp/ttnn-testpypi/bin/activate
+pip install -U pip
 pip install \
   --index-url https://test.pypi.org/simple/ \
+  --extra-index-url https://pypi.org/simple/ \
   'torch-ttnn-shutov[pypi]==0.2.0'
 
 python -c "import torch_ttnn; print(torch_ttnn.__file__)"
 python -c "import ttnn; print(ttnn.__file__)"
-python -c "from torch_ttnn.cpp_extension import ttnn_module; print(ttnn_module.__file__)"
+python -c "from torch_ttnn.cpp_extension import ttnn_module; assert hasattr(ttnn_module, 'as_torch_device'); print(ttnn_module.__file__)"
 pip show torch-ttnn-shutov ttnn-shutov
 ```
 
 ```bash
 # Production PyPI (same command without --index-url)
+export LD_LIBRARY_PATH=/path/to/openmpi-v5.0.7-ulfm/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
 pip install 'torch-ttnn-shutov[pypi]==0.2.0'
 
 python -c "import torch_ttnn; print(torch_ttnn.__file__)"
 python -c "import ttnn; print(ttnn.__file__)"
-python -c "from torch_ttnn.cpp_extension import ttnn_module; print(ttnn_module.__file__)"
+python -c "from torch_ttnn.cpp_extension import ttnn_module; assert hasattr(ttnn_module, 'as_torch_device'); print(ttnn_module.__file__)"
 pip show torch-ttnn-shutov ttnn-shutov
 ```
 
 Compare `pip show` version with `VERSION` file and workflow log `Built from commit:`.
+
+### Verified RedOrangeSweater TestPyPI (ttnn)
+
+| Fact | Value |
+| --- | --- |
+| Package | `ttnn-shutov==0.65.0.dev20251204` |
+| Metal tip | `96e4b712338ef7fc3ad7b9d1ac551dc8e0eb3938` |
+| Pin | `8dfb324099a1bf6b8839cffd5740e22a4d621385` |
+| none run | https://github.com/RedOrangeSweater/ML.TT.Metal/actions/runs/29074577044 |
+| testpypi run | https://github.com/RedOrangeSweater/ML.TT.Metal/actions/runs/29080934432 |
+| Local marker | `TESTPYPI_TTNN_OK` |
+
+Do **not** upload `+g…` / `+local` versions to TestPyPI/PyPI (HTTP 400).
 
 ## Local repack (debug)
 
