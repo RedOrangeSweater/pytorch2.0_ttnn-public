@@ -10,7 +10,7 @@ Each `public/*` / `fix/*` code branch has a `.dev` sibling that is **exactly one
 | --- | --- | --- | --- |
 | 0 | `fix/tt_metal_bump` | `.dev` | tt-metal compatibility base |
 | 1–5 | `public/10-unary` … `50-reduction` | `.dev` | eager op stack |
-| 6 | `public/70-pypi` | `.dev` | **0.2.0** matched packaging tip `36a52ae5` |
+| 6 | `public/70-pypi` | `.dev` | **0.2.0** matched packaging tip `58551cf9` |
 | archive | `archive/70-pypi-v1-0.1.0` | — | old 0.1.0 draft; do not transfer |
 
 ## Operator recipe
