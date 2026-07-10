@@ -12,13 +12,24 @@ By leveraging the TT-NN backend, you can achieve significant performance improve
 ### Installation (this fork: `-shutov` packages)
 
 ```bash
+# Production PyPI (after shutovilyaep publish). Until then use TestPyPI below.
 pip install 'torch-ttnn-shutov[pypi]==0.2.0'
+```
+
+```bash
+# Verified TestPyPI rehearsal (2026-07-10)
+export LD_LIBRARY_PATH=/path/to/openmpi-v5.0.7-ulfm/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+pip install \
+  --index-url https://test.pypi.org/simple/ \
+  --extra-index-url https://pypi.org/simple/ \
+  'torch-ttnn-shutov[pypi]==0.2.0'
+python -c "import ttnn, torch_ttnn; from torch_ttnn.cpp_extension import ttnn_module; assert hasattr(ttnn_module,'as_torch_device')"
 ```
 
 That pulls matching `ttnn-shutov==0.65.0.dev20251204` (metal pin `8dfb324099a`). Import names stay
 `torch_ttnn` / `ttnn`. Verified claim (L0): import both packages and load
 `torch_ttnn.cpp_extension.ttnn_module` with `as_torch_device` present. HW eager forward
-(L2) is separate evidence.
+(L2) is separate evidence. Runtime needs OpenMPI **5** ULFM (`MPIX_Comm_revoke`), not host apt OpenMPI 4.
 
 #### Why this install works here (and what broke upstream packaging)
 
@@ -33,10 +44,11 @@ That pulls matching `ttnn-shutov==0.65.0.dev20251204` (metal pin `8dfb324099a`).
 
 | Piece | Link |
 | --- | --- |
-| Frozen tt-metal `main` = pin + packaging only | [RedOrangeSweater/ML.TT.Metal](https://github.com/RedOrangeSweater/ML.TT.Metal) @ `8dfb324` + PRs [#1](https://github.com/RedOrangeSweater/ML.TT.Metal/pull/1)–[#6](https://github.com/RedOrangeSweater/ML.TT.Metal/pull/6) |
-| From-source `ttnn-shutov` workflow | `release-ttnn-shutov-from-source.yaml` (no TT harbor runners; auditwheel skipped — repair on this pin corrupts ELF) |
-| Matching torch packaging | [PR #17](https://github.com/RedOrangeSweater/ML.TT.PyTorchTtnn/pull/17) |
-| Prod mirror | `shutovilyaep/tt-metal` + `shutovilyaep/pytorch2.0_ttnn` (same commits; checklist on build host) |
+| Frozen tt-metal tip + packaging | [ML.TT.Metal](https://github.com/RedOrangeSweater/ML.TT.Metal) tip `96e4b712` (pin `8dfb324` + PRs [#10](https://github.com/RedOrangeSweater/ML.TT.Metal/pull/10)–[#12](https://github.com/RedOrangeSweater/ML.TT.Metal/pull/12)) |
+| Metal none / TestPyPI | [29074577044](https://github.com/RedOrangeSweater/ML.TT.Metal/actions/runs/29074577044) / [29080934432](https://github.com/RedOrangeSweater/ML.TT.Metal/actions/runs/29080934432) |
+| Torch TestPyPI (`0.2.0`) | [29093775367](https://github.com/RedOrangeSweater/ML.TT.PyTorchTtnn/actions/runs/29093775367) |
+| Wheel SHA256 | `ttnn` `6328c55d…` / `torch` `1746d670…` (see `docs/PYPI_torch_ttnn_shutov.md`) |
+| Prod mirror | `shutovilyaep/tt-metal` + `shutovilyaep/pytorch2.0_ttnn` (operator checklist; push not from this host) |
 
 Upstream `pip install torch-ttnn` still resolves to stale `0.5.6` / broken URL-dep split
 ([#1036](https://github.com/tenstorrent/pytorch2.0_ttnn/issues/1036) /

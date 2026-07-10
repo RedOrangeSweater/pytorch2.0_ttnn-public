@@ -96,16 +96,20 @@ pip show torch-ttnn-shutov ttnn-shutov
 
 Compare `pip show` version with `VERSION` file and workflow log `Built from commit:`.
 
-### Verified RedOrangeSweater TestPyPI (ttnn)
+### Verified RedOrangeSweater TestPyPI
 
 | Fact | Value |
 | --- | --- |
-| Package | `ttnn-shutov==0.65.0.dev20251204` |
+| `ttnn-shutov` | `0.65.0.dev20251204` |
 | Metal tip | `96e4b712338ef7fc3ad7b9d1ac551dc8e0eb3938` |
 | Pin | `8dfb324099a1bf6b8839cffd5740e22a4d621385` |
-| none run | https://github.com/RedOrangeSweater/ML.TT.Metal/actions/runs/29074577044 |
-| testpypi run | https://github.com/RedOrangeSweater/ML.TT.Metal/actions/runs/29080934432 |
-| Local marker | `TESTPYPI_TTNN_OK` |
+| Metal none | https://github.com/RedOrangeSweater/ML.TT.Metal/actions/runs/29074577044 |
+| Metal TestPyPI | https://github.com/RedOrangeSweater/ML.TT.Metal/actions/runs/29080934432 |
+| `torch-ttnn-shutov` | `0.2.0` |
+| Torch TestPyPI | https://github.com/RedOrangeSweater/ML.TT.PyTorchTtnn/actions/runs/29093775367 |
+| Local marker | `TESTPYPI_PAIR_SMOKE_OK` |
+| SHA256 ttnn | `6328c55d12db443b53356ddfac85972d0bd775dbf13e4c7922fc3272855e9a92` |
+| SHA256 torch | `1746d67042e6364e4d38741eadce3a9fc7bfc60c0d642164e672936217c36bf3` |
 
 Do **not** upload `+g…` / `+local` versions to TestPyPI/PyPI (HTTP 400).
 
