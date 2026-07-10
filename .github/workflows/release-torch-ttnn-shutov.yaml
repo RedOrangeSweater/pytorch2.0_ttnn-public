@@ -7,7 +7,7 @@ run-name: "Release torch-ttnn-shutov (${{ inputs.wheel_type }} -> ${{ inputs.pub
 # - no Tenstorrent hardware mounts (/dev/tenstorrent, hugepages NFS cache)
 # - distribution name: torch-ttnn-shutov (import package stays torch_ttnn)
 # - publish: workflow_dispatch with wheel_type=release only, explicitly choosing TestPyPI or PyPI
-# - Matched eager path: submodule pin 8dfb324 + ttnn-shutov==0.65.0.dev20251204+g8dfb324099
+# - Matched eager path: submodule pin 8dfb324 + ttnn-shutov==0.65.0.dev20251204
 
 on:
   workflow_dispatch:

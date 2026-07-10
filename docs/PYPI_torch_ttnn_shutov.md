@@ -14,7 +14,7 @@ Publication fix (separate from eager-op code):
 
 1. Build `ttnn` from tt-metal pin `8dfb324099a` (ML.TT.Metal workflow
    `release-ttnn-shutov-from-source`) and publish as
-   `ttnn-shutov==0.65.0.dev20251204+g8dfb324099`.
+   `ttnn-shutov==0.65.0.dev20251204` (built from metal pin `8dfb324099a`).
 2. Publish `torch-ttnn-shutov==0.2.0` with `[pypi]` pinning that matching runtime.
 3. Default CI is artifact-only; TestPyPI then prod after pair-smoke.
 
@@ -24,7 +24,7 @@ Publication fix (separate from eager-op code):
 
 | Package | Version | PyPI | TestPyPI |
 | --- | --- | --- | --- |
-| `ttnn-shutov` | `0.65.0.dev20251204+g8dfb324099` | yes | yes |
+| `ttnn-shutov` | `0.65.0.dev20251204` | yes | yes |
 | `torch-ttnn-shutov` | `0.2.0` | yes | yes |
 
 ### Why from-source matching wheel
